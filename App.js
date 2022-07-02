@@ -1,13 +1,16 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-
+import useEffect from 'react';
+import RootStackScreen from './screens/RootStackScreen';
+import { NavigationContainer } from '@react-navigation/native';
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Hello Maham Anwar</Text>
 
-      <StatusBar style="auto" />
-    </View>
+  return (
+    <NavigationContainer>
+      <RootStackScreen/>
+     
+      {/* <LoginScreen></LoginScreen> */}
+    </NavigationContainer>
   );
 }
 
