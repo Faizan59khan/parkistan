@@ -1,17 +1,20 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import { Button } from "@rneui/themed";
+import useEffect from 'react';
+import RootStackScreen from './screens/RootStackScreen';
+import { NavigationContainer } from '@react-navigation/native';
+import {AuthContextProvider} from './context/AuthContext'
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Hello Ainulhaq</Text>
-      
- 
 
-      <StatusBar style="auto" />
-    
-    </View>
+  return (
+    <AuthContextProvider>
+    <NavigationContainer>
+      <RootStackScreen/>
+     
+      {/* <LoginScreen></LoginScreen> */}
+    </NavigationContainer>
+    </AuthContextProvider>
   );
 }
 

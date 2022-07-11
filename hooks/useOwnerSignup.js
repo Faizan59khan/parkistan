@@ -3,20 +3,19 @@ import { projectAuth, projectStorage,projectFirestore } from '../firebase/config
 import { useAuthContext } from './useAuthContext'
 
 
-export const useSignup = () => {
+export const useOwnerSignup = () => {
   const [isCancelled, setIsCancelled] = useState(false)
   const [error, setError] = useState(null)
   const [isPending, setIsPending] = useState(false)
   const { dispatch } = useAuthContext()
 
-  const signup = async (email, password, displayName,carNum,cnic,contactNum) => {
+  const signup = async (email, password, displayName,cnic,contactNum) => {
     setError(null)
     setIsPending(true)
-  
     try {
       // signup
       const res = await projectAuth.createUserWithEmailAndPassword(email, password)
-
+      console.log(res.user.uid);
       if (!res) {
         throw new Error('Could not complete signup')
       }
@@ -29,16 +28,20 @@ export const useSignup = () => {
       // add display AND PHOTO_URL name to user
       // await res.user.updateProfile({ displayName, photoURL: imgUrl })
          // create a user document
-        
-         await projectFirestore.collection('users').doc(res.user.uid).set({          //specific user collection
+        console.log("yes")
+        try{
+         await projectFirestore.collection('owner').doc(res.user.uid).set({          //specific user collection
           email: email,
           displayName: displayName,
           // imgUrl: imgUrl,
-          carNum: carNum,
           cnic: cnic,
           contactNum: contactNum,
           time:res.user.metadata.creationTime
         })
+      }
+      catch(err){
+        console.log(err.message);
+      }
 
        // dispatch login action
        dispatch({ type: 'LOGIN', payload: res.user })

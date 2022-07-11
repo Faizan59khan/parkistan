@@ -1,17 +1,16 @@
 import { useState, useEffect } from 'react'
 import { projectAuth, projectFirestore } from '../firebase/config'
 import { useAuthContext } from './useAuthContext'
-import { useNavigate } from 'react-router-dom'
+
 
 export const useLogin = () => {
   const [isCancelled, setIsCancelled] = useState(false)
-  const [error, setError] = useState(null)
-  const [isPending, setIsPending] = useState(false)
+  const [err, setErr] = useState(null)
+  const [isPen, setIsPen] = useState(false)
   const { dispatch } = useAuthContext()
-  const history=useNavigate();
   const login = async (email, password) => {
-    setError(null)
-    setIsPending(true)
+    setErr(null)
+    setIsPen(true)
   
     try {
       // login
@@ -27,14 +26,15 @@ export const useLogin = () => {
       dispatch({ type: 'LOGIN', payload: res.user })
 
       if (!isCancelled) {
-        setIsPending(false)
-        setError(null)
+        setIsPen(false)
+        setErr(null)
       }
     } 
     catch(err) {
+      console.log(err.message);
       if (!isCancelled) {
-        setError(err.message)
-        setIsPending(false)
+        setErr(err.message)
+        setIsPen(false)
       }
     }
   }
@@ -43,5 +43,5 @@ export const useLogin = () => {
     return () => setIsCancelled(true)
   }, [])
 
-  return { login, isPending, error }
+  return { login, isPen, err }
 }
