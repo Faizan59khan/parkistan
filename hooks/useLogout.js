@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react'
 import { projectAuth, projectFirestore } from '../firebase/config'
 import { useAuthContext } from './useAuthContext'
-import { useNavigate } from 'react-router-dom'
+
 
 export const useLogout = () => {
   const [isCancelled, setIsCancelled] = useState(false)
   const [error, setError] = useState(null)
   const [isPending, setIsPending] = useState(false)
   const { dispatch } = useAuthContext()
-  const history=useNavigate()
   const logout = async () => {
     setError(null)
     setIsPending(true)

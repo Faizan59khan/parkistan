@@ -26,6 +26,11 @@ import {
 import { useFonts } from 'expo-font';
 import AppLoading from 'expo-app-loading'
 import * as DocumentPicker from 'expo-document-picker';
+import { useOwnerSignup } from '../../hooks/useOwnerSignup'
+import { useAuthContext } from '../../hooks/useAuthContext'
+import {useCollection} from '../../hooks/useCollection'
+import { useFirestore } from '../../hooks/useFirestore';
+
 
 export default function Signup({ navigation }) {
   const [fontsLoaded] = useFonts({
@@ -43,12 +48,26 @@ export default function Signup({ navigation }) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [spaceDesc,setSpaceDesc]=useState("")
+
+   const { signup, error, isPending } = useOwnerSignup();
+
   // var docUri;
  let docUri,docName,docSize,docType;
+ 
 
   const handleCreateAccount = (e) => {
     e.preventDefault()
     console.log("Name: ",name,"\nContact No: ",contactNum,"\nEmail Address: ",email,"\nCNIC #: ",cnic,"\nPassword: ",password,"\nConfirm Password: ",confirmPassword,"\nSpace Description: ",spaceDesc,"\nUploaded document Data: ",{docName,docSize,docType,docUri})
+    signup(email,password,name,cnic,contactNum);
+    if (!error) {
+            setEmail('')
+            setPassword('')
+            setName('')
+            setConfirmPassword('')
+            setCnic('')
+            setContact('')
+    }
+    
   }
 
 
@@ -193,7 +212,7 @@ export default function Signup({ navigation }) {
         </View>
        
        {/* Space Description */}
-        <View style={styles.inputContainer}>
+        {/* <View style={styles.inputContainer}>
         <TextInput style={styles.TextInput}
           onChangeText={(value) => setSpaceDesc(value)}
           value={spaceDesc}
@@ -209,11 +228,11 @@ export default function Signup({ navigation }) {
         </TextInput>
         <View style={{borderBottomWidth:1,
      borderBottomColor: 'rgba(24, 27, 36, 0.6)'}}></View>
-        </View>
+        </View> */}
 
   <Text  style={styles.uploadDocsHeading}>Upload Documents</Text>
              </View>  
-             <View style={{alignItems:'center'}}>
+             {/* <View style={{alignItems:'center'}}>
              <View style={styles.UploadDocContainer}>
               <Text style={{width:200,height:30,color:'rgba(139, 185, 141, 0.8)'}} onPress={pickDocument}>hello</Text>
               <View style={{flexWrap:'wrap' , }}>
@@ -221,7 +240,7 @@ export default function Signup({ navigation }) {
              <FontAwesome5 name="file-upload" size={20} color="black" style={{margin:5}} />
              </View>
              </View>
-             </View>
+             </View> */}
       <View style={{ alignItems: 'center' }}>
         <TouchableOpacity
           style={styles.CreateAccButton}
@@ -230,6 +249,10 @@ export default function Signup({ navigation }) {
           <Text style={styles.CreateAccText}>Create Account</Text>
         </TouchableOpacity>
       </View>
+
+        <View>
+        {error && <Text>{error}</Text>}
+      </View> 
 
       <View style={{ alignItems: 'center',marginTop:20}}>
         <Text style={styles.HaveAccText}>

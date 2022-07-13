@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Button,
@@ -24,6 +24,10 @@ import {
 import { useFonts } from 'expo-font';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AppLoading from 'expo-app-loading'
+import { useSignup } from '../../hooks/useSignup'
+import { useAuthContext } from '../../hooks/useAuthContext'
+import {useCollection} from '../../hooks/useCollection'
+import { useFirestore } from '../../hooks/useFirestore';
 
 export default function Signup({ navigation }) {
   const [fontsLoaded] = useFonts({
@@ -41,11 +45,31 @@ export default function Signup({ navigation }) {
   const [carNum,setCarNum]=useState("")
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+   const { signup, error, isPending } = useSignup();
+   const { user,dispatch } = useAuthContext();
+   
+   useEffect(()=>{
+     if(user){
+      navigation.navigate('Map');
+     }
+   },[user])
+
   
-  const handleCreateAccount = (e) => {
+  const handleCreateAccount = async (e) => {
     e.preventDefault()
-    console.log("Name: ",name,"\nContact No: ",contactNum,"\nEmail Address: ",email,"\nCar Registration #: ",carNum,"\nCNIC #: ",cnic,"\nPassword: ",password,"\nConfirm Password: ",confirmPassword)
+    signup(email,password,name,carNum,cnic,contactNum);
+      if (!error) {
+            setEmail('')
+            setPassword('')
+            setName('')
+            setConfirmPassword('')
+            setCnic('')
+            setContact('')
+            setCarNum('')
+    }
   }
+ 
   if (!fontsLoaded) {
     return <AppLoading />
   }
@@ -202,6 +226,10 @@ export default function Signup({ navigation }) {
           underlayColor='#fff'>
           <Text style={styles.CreateAccText}>Create Account</Text>
         </TouchableOpacity>
+      </View>
+
+      <View>
+        {error && <Text>{error}</Text>}
       </View>
 
       <View style={{ alignItems: 'center',marginTop:20}}>

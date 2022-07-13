@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useState, useEffect} from 'react';
 import { 
     View,
     Button,
@@ -24,6 +24,9 @@ import {
 import {useFonts} from 'expo-font';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AppLoading from 'expo-app-loading';
+import { useAuthContext } from '../../hooks/useAuthContext'
+import { useLogin } from '../../hooks/useLogin'
+import { useLogout } from '../../hooks/useLogout'
 
 
 const Login=({navigation}) =>{
@@ -45,11 +48,22 @@ const[fontsLoaded] = useFonts({
     {label: 'Parking Inspector', value: 'parkingInspector'}
   ]);
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null)
+  const [value, setValue] = useState("user");
+
+    const {user}=useAuthContext();
+    const {logout,error,isPending}=useLogout();
+    const { login, err, isPen } = useLogin();
+
+    useEffect(()=>{
+      if(user && value === "user"){
+        navigation.navigate('Map')
+      }
+    },[user])
+    
   
   const handleLogin = (e) => {
-    e.preventDefault()
-    console.log("Email: ",email,"\nPassword: ",password,"\nAcc Type: ",value)
+    e.preventDefault()  
+    login(email,password)
   }
   if(!fontsLoaded){
    return <AppLoading/>
@@ -128,7 +142,20 @@ const[fontsLoaded] = useFonts({
           underlayColor='#fff'>
           <Text style={styles.loginText}>Login</Text>
  </TouchableOpacity>
+
  </View>
+   <View style={{alignItems:'center'}}>
+    <TouchableOpacity
+          style={styles.loginScreenButton}
+          onPress={logout}
+          underlayColor='#fff'>
+          <Text style={styles.loginText}>Log out</Text>
+ </TouchableOpacity>
+ </View>
+
+  <View>
+        {err && <Text>{err}</Text>}
+  </View>
 
  <View style={{alignItems:'center',marginTop:40}}>
    <Text style={styles.HaveAccText}>
@@ -137,6 +164,7 @@ const[fontsLoaded] = useFonts({
    <Text onPress={()=>navigation.navigate('UserSignUpScreen')} style={styles.BottomHeading} >
    Signup
    </Text>
+    
  </View>
 
     </View>
