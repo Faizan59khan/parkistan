@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Entypo } from '@expo/vector-icons'; 
-import { FontAwesome5 } from '@expo/vector-icons'; 
+import React, { useState } from "react";
+import { Entypo } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
 import {
   View,
   Button,
@@ -12,25 +12,24 @@ import {
   StyleSheet,
   StatusBar,
   Alert,
-  Image
-} from 'react-native';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Fontisto from 'react-native-vector-icons/Fontisto';
+  Image,
+} from "react-native";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+import Fontisto from "react-native-vector-icons/Fontisto";
 import {
   BalooBhai2_400Regular,
   BalooBhai2_500Medium,
   BalooBhai2_600SemiBold,
   BalooBhai2_700Bold,
-  BalooBhai2_800ExtraBold
-} from '@expo-google-fonts/baloo-bhai-2'
-import { useFonts } from 'expo-font';
-import AppLoading from 'expo-app-loading'
-import * as DocumentPicker from 'expo-document-picker';
-import { useOwnerSignup } from '../../hooks/useOwnerSignup'
-import { useAuthContext } from '../../hooks/useAuthContext'
-import {useCollection} from '../../hooks/useCollection'
-import { useFirestore } from '../../hooks/useFirestore';
-
+  BalooBhai2_800ExtraBold,
+} from "@expo-google-fonts/baloo-bhai-2";
+import { useFonts } from "expo-font";
+import AppLoading from "expo-app-loading";
+import * as DocumentPicker from "expo-document-picker";
+import { useOwnerSignup } from "../../hooks/useOwnerSignup";
+import { useAuthContext } from "../../hooks/useAuthContext";
+import { useCollection } from "../../hooks/useCollection";
+import { useFirestore } from "../../hooks/useFirestore";
 
 export default function Signup({ navigation }) {
   const [fontsLoaded] = useFonts({
@@ -38,7 +37,7 @@ export default function Signup({ navigation }) {
     BalooBhai2_500Medium,
     BalooBhai2_600SemiBold,
     BalooBhai2_700Bold,
-    BalooBhai2_800ExtraBold
+    BalooBhai2_800ExtraBold,
   });
 
   const [name, setName] = useState("");
@@ -47,171 +46,245 @@ export default function Signup({ navigation }) {
   const [cnic, setCnic] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [spaceDesc,setSpaceDesc]=useState("")
+  const [spaceDesc, setSpaceDesc] = useState("");
+  const [nameOfLoc, setNameOfLoc] = useState("");
 
-   const { signup, error, isPending } = useOwnerSignup();
+  const { signup, error, isPending } = useOwnerSignup();
 
   // var docUri;
- let docUri,docName,docSize,docType;
- 
+  let docUri, docName, docSize, docType;
+
+  const getLatitudeAndLongitude = (address) => {
+    address = address.replace(/ /g, "%20");
+    console.log(address);
+    fetch(
+      `https://api.opencagedata.com/geocode/v1/json?q=${address}&key=c909d8b8091347eda09e59723dc49488&language=en&pretty=1`
+    )
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        //console.log({ data });
+
+        console.log(data.results[0].geometry.lat, data.results[0].geometry.lng);
+        return {
+          latitude: data.results[0].geometry.lat,
+          longitude: data.results[0].geometry.lng,
+        };
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
 
   const handleCreateAccount = (e) => {
-    e.preventDefault()
-    console.log("Name: ",name,"\nContact No: ",contactNum,"\nEmail Address: ",email,"\nCNIC #: ",cnic,"\nPassword: ",password,"\nConfirm Password: ",confirmPassword,"\nSpace Description: ",spaceDesc,"\nUploaded document Data: ",{docName,docSize,docType,docUri})
-    signup(email,password,name,cnic,contactNum);
+    e.preventDefault();
+    // console.log(
+    //   "Name: ",
+    //   name,
+    //   "\nContact No: ",
+    //   contactNum,
+    //   "\nEmail Address: ",
+    //   email,
+    //   "\nCNIC #: ",
+    //   cnic,
+    //   "\nPassword: ",
+    //   password,
+    //   "\nConfirm Password: ",
+    //   confirmPassword,
+    //   "\nSpace Description: ",
+    //   spaceDesc,
+    //   "\nUploaded document Data: ",
+    //   { docName, docSize, docType, docUri }
+    // );
+    console.log(nameOfLoc);
+    const location = getLatitudeAndLongitude(nameOfLoc);
+    console.log(location);
+    signup(email, password, name, cnic, contactNum, location, nameOfLoc);
     if (!error) {
-            setEmail('')
-            setPassword('')
-            setName('')
-            setConfirmPassword('')
-            setCnic('')
-            setContact('')
+      setEmail("");
+      setPassword("");
+      setName("");
+      setConfirmPassword("");
+      setCnic("");
+      setContact("");
+      setNameOfLoc("");
     }
-    
-  }
-
+  };
 
   const pickDocument = async () => {
     let result = await DocumentPicker.getDocumentAsync({});
-    docUri=result.uri,
-    docName=result.name,
-    docSize=result.size,
-    docType= result.mimeType
-
+    (docUri = result.uri),
+      (docName = result.name),
+      (docSize = result.size),
+      (docType = result.mimeType);
   };
-  
+
   if (!fontsLoaded) {
-    return <AppLoading />
+    return <AppLoading />;
   }
   return (
     <View style={styles.container}>
-      <View style={{ alignItems: 'center' }}>
+      <View style={{ alignItems: "center" }}>
         <Text style={styles.LRHeading}>REGISTRATION</Text>
       </View>
 
-      <View style={{overflow:'hidden',paddingBottom:5}}>
+      <View style={{ overflow: "hidden", paddingBottom: 5 }}>
         <View style={styles.AccChoicesParent}>
-          <Text onPress={()=>{navigation.navigate('UserSignUpScreen')}} style={styles.AccChoices}>User</Text>
+          <Text
+            onPress={() => {
+              navigation.navigate("UserSignUpScreen");
+            }}
+            style={styles.AccChoices}
+          >
+            User
+          </Text>
           <Text style={styles.Active}>Owner</Text>
           <Text style={styles.userUnderline}>_______________</Text>
-          
-        
         </View>
       </View>
-      
-      <View style={{alignItems:'center'}}>
-      {/* Name */}
-      <View style={styles.inputContainer}>
-        <TextInput style={styles.TextInput}
-          maxLength={50}
-          onChangeText={(value) => setName(value)}
-          value={name}
-          placeholder='Name'
-          placeholderTextColor="#033205"
-          autoCapitalize="words"
-          autoCorrect={false}
 
-        >
-
-        </TextInput>
-        <View style={{borderBottomWidth:1,
-     borderBottomColor: 'rgba(24, 27, 36, 0.6)'}}></View>
+      <View style={{ alignItems: "center" }}>
+        {/* Name */}
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.TextInput}
+            maxLength={50}
+            onChangeText={(value) => setName(value)}
+            value={name}
+            placeholder="Name"
+            placeholderTextColor="#033205"
+            autoCapitalize="words"
+            autoCorrect={false}
+          ></TextInput>
+          <View
+            style={{
+              borderBottomWidth: 1,
+              borderBottomColor: "rgba(24, 27, 36, 0.6)",
+            }}
+          ></View>
         </View>
 
-      {/* contactNum */}
-      <View style={styles.inputContainer}>
-        <TextInput style={styles.TextInput}
-          maxLength={11}
-          onChangeText={(value) => setContact(value)}
-          value={contactNum}
-          placeholder='Contact Number'
-          placeholderTextColor="#033205"
-          autoCapitalize="none"
-          autoCorrect={false}
-          keyboardType='numeric'
-
-        >
-
-        </TextInput>
-        <View style={{borderBottomWidth:1,
-     borderBottomColor: 'rgba(24, 27, 36, 0.6)'}}></View>
+        {/* contactNum */}
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.TextInput}
+            maxLength={11}
+            onChangeText={(value) => setContact(value)}
+            value={contactNum}
+            placeholder="Contact Number"
+            placeholderTextColor="#033205"
+            autoCapitalize="none"
+            autoCorrect={false}
+            keyboardType="numeric"
+          ></TextInput>
+          <View
+            style={{
+              borderBottomWidth: 1,
+              borderBottomColor: "rgba(24, 27, 36, 0.6)",
+            }}
+          ></View>
         </View>
 
         {/* Email Address */}
-      <View style={styles.inputContainer}>
-        <TextInput style={styles.TextInput}
-          maxLength={30}
-          onChangeText={(value) => setEmail(value)}
-          value={email}
-          placeholder='Email Address'
-          placeholderTextColor="#033205"
-          autoCapitalize="none"
-          autoCorrect={false}
-          keyboardType='email-address'
-
-        >
-
-        </TextInput>
-        <View style={{borderBottomWidth:1,
-     borderBottomColor: 'rgba(24, 27, 36, 0.6)'}}></View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.TextInput}
+            maxLength={30}
+            onChangeText={(value) => setEmail(value)}
+            value={email}
+            placeholder="Email Address"
+            placeholderTextColor="#033205"
+            autoCapitalize="none"
+            autoCorrect={false}
+            keyboardType="email-address"
+          ></TextInput>
+          <View
+            style={{
+              borderBottomWidth: 1,
+              borderBottomColor: "rgba(24, 27, 36, 0.6)",
+            }}
+          ></View>
         </View>
 
-
         {/* CNIC */}
-      <View style={styles.inputContainer}>
-        <TextInput style={styles.TextInput}
-          maxLength={15}
-          onChangeText={(value) => setCnic(value)}
-          value={cnic}
-          placeholder='CNIC #'
-          placeholderTextColor="#033205"
-          autoCapitalize="none"
-          autoCorrect={false}
-
-        >
-
-        </TextInput>
-        <View style={{borderBottomWidth:1,
-     borderBottomColor: 'rgba(24, 27, 36, 0.6)'}}></View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.TextInput}
+            maxLength={15}
+            onChangeText={(value) => setCnic(value)}
+            value={cnic}
+            placeholder="CNIC #"
+            placeholderTextColor="#033205"
+            autoCapitalize="none"
+            autoCorrect={false}
+          ></TextInput>
+          <View
+            style={{
+              borderBottomWidth: 1,
+              borderBottomColor: "rgba(24, 27, 36, 0.6)",
+            }}
+          ></View>
         </View>
 
         {/* password */}
-      <View style={styles.inputContainer}>
-        <TextInput style={styles.TextInput}
-          onChangeText={(value) => setPassword(value)}
-          value={password}
-          placeholder='Password'
-          placeholderTextColor="#033205"
-          autoCapitalize="none"
-          autoCorrect={false}
-          secureTextEntry={true}
-          
-        >
-
-        </TextInput>
-        <View style={{borderBottomWidth:1,
-     borderBottomColor: 'rgba(24, 27, 36, 0.6)'}}></View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.TextInput}
+            onChangeText={(value) => setPassword(value)}
+            value={password}
+            placeholder="Password"
+            placeholderTextColor="#033205"
+            autoCapitalize="none"
+            autoCorrect={false}
+            secureTextEntry={true}
+          ></TextInput>
+          <View
+            style={{
+              borderBottomWidth: 1,
+              borderBottomColor: "rgba(24, 27, 36, 0.6)",
+            }}
+          ></View>
         </View>
 
         {/* confirm password */}
-      <View style={styles.inputContainer}>
-        <TextInput style={styles.TextInput}
-          onChangeText={(value) => setConfirmPassword(value)}
-          value={confirmPassword}
-          placeholder='Confirm Password'
-          placeholderTextColor="#033205"
-          autoCapitalize="none"
-          autoCorrect={false}
-          secureTextEntry={true}
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.TextInput}
+            onChangeText={(value) => setConfirmPassword(value)}
+            value={confirmPassword}
+            placeholder="Confirm Password"
+            placeholderTextColor="#033205"
+            autoCapitalize="none"
+            autoCorrect={false}
+            secureTextEntry={true}
+          ></TextInput>
+          <View
+            style={{
+              borderBottomWidth: 1,
+              borderBottomColor: "rgba(24, 27, 36, 0.6)",
+            }}
+          ></View>
 
-        >
-
-        </TextInput>
-        <View style={{borderBottomWidth:1,
-     borderBottomColor: 'rgba(24, 27, 36, 0.6)'}}></View>
+          <TextInput
+            style={styles.TextInput}
+            maxLength={30}
+            onChangeText={(value) => setNameOfLoc(value)}
+            value={nameOfLoc}
+            placeholder="Enter Your Location"
+            placeholderTextColor="#033205"
+            autoCapitalize="none"
+            autoCorrect={false}
+          ></TextInput>
+          <View
+            style={{
+              borderBottomWidth: 1,
+              borderBottomColor: "rgba(24, 27, 36, 0.6)",
+            }}
+          ></View>
         </View>
-       
-       {/* Space Description */}
+
+        {/* Space Description */}
         {/* <View style={styles.inputContainer}>
         <TextInput style={styles.TextInput}
           onChangeText={(value) => setSpaceDesc(value)}
@@ -230,9 +303,9 @@ export default function Signup({ navigation }) {
      borderBottomColor: 'rgba(24, 27, 36, 0.6)'}}></View>
         </View> */}
 
-  <Text  style={styles.uploadDocsHeading}>Upload Documents</Text>
-             </View>  
-             {/* <View style={{alignItems:'center'}}>
+        <Text style={styles.uploadDocsHeading}>Upload Documents</Text>
+      </View>
+      {/* <View style={{alignItems:'center'}}>
              <View style={styles.UploadDocContainer}>
               <Text style={{width:200,height:30,color:'rgba(139, 185, 141, 0.8)'}} onPress={pickDocument}>hello</Text>
               <View style={{flexWrap:'wrap' , }}>
@@ -241,137 +314,129 @@ export default function Signup({ navigation }) {
              </View>
              </View>
              </View> */}
-      <View style={{ alignItems: 'center' }}>
+      <View style={{ alignItems: "center" }}>
         <TouchableOpacity
           style={styles.CreateAccButton}
           onPress={handleCreateAccount}
-          underlayColor='#fff'>
+          underlayColor="#fff"
+        >
           <Text style={styles.CreateAccText}>Create Account</Text>
         </TouchableOpacity>
       </View>
 
-        <View>
-        {error && <Text>{error}</Text>}
-      </View> 
+      <View>{error && <Text>{error}</Text>}</View>
 
-      <View style={{ alignItems: 'center',marginTop:20}}>
-        <Text style={styles.HaveAccText}>
-          Already have an account?
-        </Text>
-        <Text onPress={() => navigation.navigate('LoginScreen')} style={styles.BottomHeading} >
+      <View style={{ alignItems: "center", marginTop: 20 }}>
+        <Text style={styles.HaveAccText}>Already have an account?</Text>
+        <Text
+          onPress={() => navigation.navigate("LoginScreen")}
+          style={styles.BottomHeading}
+        >
           Login
         </Text>
       </View>
-
     </View>
   );
 }
 const styles = StyleSheet.create({
-
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    paddingTop:20,
+    backgroundColor: "#fff",
+    paddingTop: 20,
     // alignItems: 'center',
     // justifyContent: 'center',
-
   },
-  LRHeading: { //top heading for Login and registration 
+  LRHeading: {
+    //top heading for Login and registration
     marginTop: 20,
-    marginBottom:10,
-    fontFamily: 'BalooBhai2_700Bold',
-    color: '#033205',
+    marginBottom: 10,
+    fontFamily: "BalooBhai2_700Bold",
+    color: "#033205",
     fontSize: 20,
-
-
   },
   AccChoicesParent: {
-    flexDirection: 'row',
-    flexWrap:'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     height: 47,
-    backgroundColor: '#FFFFFF', alignItems: 'center',
-    borderBottomLeftRadius:10,
-    borderBottomRightRadius:10,
-    shadowColor: '#000',
+    backgroundColor: "#FFFFFF",
+    alignItems: "center",
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+    shadowColor: "#000",
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.4,
     shadowRadius: 3,
     elevation: 5,
   },
   AccChoices: {
-    fontFamily: 'BalooBhai2_700Bold',
-    color:'#808080',
+    fontFamily: "BalooBhai2_700Bold",
+    color: "#808080",
     // textDecorationLine:'underline',
     fontSize: 20,
     marginRight: 50,
     marginLeft: 70,
-     marginTop: 5
-
+    marginTop: 5,
   },
-  Active:{
-    color: '#033205',
-    fontFamily: 'BalooBhai2_700Bold',
+  Active: {
+    color: "#033205",
+    fontFamily: "BalooBhai2_700Bold",
     fontSize: 20,
     marginRight: 50,
     marginLeft: 70,
-     marginTop: 5
+    marginTop: 5,
   },
-  userUnderline:{
-     color:'#FFFFFF',
-    borderBottomWidth:4,
-     borderBottomColor: '#033205',
-     marginTop:-25,
-     marginLeft:215
+  userUnderline: {
+    color: "#FFFFFF",
+    borderBottomWidth: 4,
+    borderBottomColor: "#033205",
+    marginTop: -25,
+    marginLeft: 215,
   },
   inputContainer: {
     // flexDirection: 'row',
     width: 298,
     height: 42,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     // borderBottomWidth:1,
     // borderBottomColor: '#033205',
-    textAlign: 'center',
-     margin: 5,
-  //  shadowColor: '#000',
-  
-  //   shadowOffset: { width: 1, height: 1 },
-  //   shadowOpacity: 0.4,
-  //   shadowRadius: 3,
-  //   elevation: 5,
+    textAlign: "center",
+    margin: 5,
+    //  shadowColor: '#000',
+
+    //   shadowOffset: { width: 1, height: 1 },
+    //   shadowOpacity: 0.4,
+    //   shadowRadius: 3,
+    //   elevation: 5,
   },
   TextInput: {
-    
     marginTop: 12,
-    fontFamily: 'BalooBhai2_400Regular',
+    fontFamily: "BalooBhai2_400Regular",
     lineHeight: 20,
     fontSize: 18,
-  
-
   },
-  uploadDocsHeading:{
-    marginTop:10,
-    marginBottom:10,
-    fontFamily: 'BalooBhai2_700Bold',
-    color: '#033205',
+  uploadDocsHeading: {
+    marginTop: 10,
+    marginBottom: 10,
+    fontFamily: "BalooBhai2_700Bold",
+    color: "#033205",
     fontSize: 20,
   },
   UploadDocContainer: {
-    flexDirection: 'row',
-    width:281,
-    height:30,
-    backgroundColor: 'rgba(139, 185, 141, 0.8)',
-    borderRadius:50,
+    flexDirection: "row",
+    width: 281,
+    height: 30,
+    backgroundColor: "rgba(139, 185, 141, 0.8)",
+    borderRadius: 50,
     //paddingTop: 10,
-     //paddingBottom: 10,
-     paddingLeft:20,
-     paddingRight:20,
-    alignItems:'center',
-    shadowColor: '#470000',
-shadowOffset: {width: 0, height: 4},
-shadowOpacity: 0.9,
-elevation: 2,
+    //paddingBottom: 10,
+    paddingLeft: 20,
+    paddingRight: 20,
+    alignItems: "center",
+    shadowColor: "#470000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.9,
+    elevation: 2,
   },
-
 
   CreateAccButton: {
     width: 168,
@@ -379,34 +444,34 @@ elevation: 2,
     marginTop: 20,
     paddingTop: 3,
     // paddingBottom:5,
-    backgroundColor: '#033205',
+    backgroundColor: "#033205",
     borderRadius: 50,
     borderWidth: 1,
-    shadowColor: '#470000',
+    shadowColor: "#470000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.9,
     elevation: 2,
   },
   CreateAccText: {
-    fontFamily: 'BalooBhai2_400Regular',
+    fontFamily: "BalooBhai2_400Regular",
     fontSize: 16,
-    color: '#D8F0D7',
-    textAlign: 'center',
+    color: "#D8F0D7",
+    textAlign: "center",
     paddingLeft: 10,
-    paddingRight: 10
+    paddingRight: 10,
   },
   HaveAccText: {
     fontSize: 20,
-    fontWeight: '400',
+    fontWeight: "400",
     lineHeight: 32,
-    fontFamily: 'BalooBhai2_400Regular'
-  },     //Have an acc or dont have acc text
+    fontFamily: "BalooBhai2_400Regular",
+  }, //Have an acc or dont have acc text
 
-  BottomHeading: { //Signup and Login bottom heads
+  BottomHeading: {
+    //Signup and Login bottom heads
     fontSize: 24,
     lineHeight: 39,
-    color: '#033205',
-    fontFamily: 'BalooBhai2_700Bold'
-
-  }
+    color: "#033205",
+    fontFamily: "BalooBhai2_700Bold",
+  },
 });

@@ -9,11 +9,12 @@ export const useOwnerSignup = () => {
   const [isPending, setIsPending] = useState(false)
   const { dispatch } = useAuthContext()
 
-  const signup = async (email, password, displayName,cnic,contactNum) => {
+  const signup = async (email, password, displayName,cnic,contactNum,location,nameOfLoc) => {
     setError(null)
     setIsPending(true)
     try {
       // signup
+
       const res = await projectAuth.createUserWithEmailAndPassword(email, password)
       console.log(res.user.uid);
       if (!res) {
@@ -28,7 +29,7 @@ export const useOwnerSignup = () => {
       // add display AND PHOTO_URL name to user
       // await res.user.updateProfile({ displayName, photoURL: imgUrl })
          // create a user document
-        console.log("yes")
+        console.log("yes" + location,+nameOfLoc)
         try{
          await projectFirestore.collection('owner').doc(res.user.uid).set({          //specific user collection
           email: email,
@@ -36,6 +37,8 @@ export const useOwnerSignup = () => {
           // imgUrl: imgUrl,
           cnic: cnic,
           contactNum: contactNum,
+          location: location,
+          nameOfLoc: nameOfLoc,
           time:res.user.metadata.creationTime
         })
       }

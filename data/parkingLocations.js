@@ -13,4 +13,5 @@ export const parkingLocations=[
       latitudeDelta: 0.0922,
       longitudeDelta: 0.0421,
     },
+    
 ]
