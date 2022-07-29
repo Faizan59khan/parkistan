@@ -1,4 +1,4 @@
-import { StatusBar } from 'expo-status-bar';
+import 'react-native-gesture-handler';
 import { StyleSheet, Text, View } from 'react-native';
 import useEffect from 'react';
 import RootStackScreen from './screens/RootStackScreen';
@@ -11,8 +11,6 @@ export default function App() {
     <AuthContextProvider>
     <NavigationContainer>
       <RootStackScreen/>
-     
-      {/* <LoginScreen></LoginScreen> */}
     </NavigationContainer>
     </AuthContextProvider>
   );

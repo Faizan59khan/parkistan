@@ -232,7 +232,7 @@ export default function Signup({ navigation }) {
 
   <Text  style={styles.uploadDocsHeading}>Upload Documents</Text>
              </View>  
-             {/* <View style={{alignItems:'center'}}>
+             <View style={{alignItems:'center'}}>
              <View style={styles.UploadDocContainer}>
               <Text style={{width:200,height:30,color:'rgba(139, 185, 141, 0.8)'}} onPress={pickDocument}>hello</Text>
               <View style={{flexWrap:'wrap' , }}>
@@ -240,7 +240,7 @@ export default function Signup({ navigation }) {
              <FontAwesome5 name="file-upload" size={20} color="black" style={{margin:5}} />
              </View>
              </View>
-             </View> */}
+             </View>
       <View style={{ alignItems: 'center' }}>
         <TouchableOpacity
           style={styles.CreateAccButton}

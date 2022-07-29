@@ -51,12 +51,12 @@ const[fontsLoaded] = useFonts({
   const [value, setValue] = useState("user");
 
     const {user}=useAuthContext();
-    const {logout,error,isPending}=useLogout();
     const { login, err, isPen } = useLogin();
 
     useEffect(()=>{
       if(user && value === "user"){
-        navigation.navigate('Map')
+        navigation.navigate('HomePage');
+        
       }
     },[user])
     
@@ -143,14 +143,6 @@ const[fontsLoaded] = useFonts({
           <Text style={styles.loginText}>Login</Text>
  </TouchableOpacity>
 
- </View>
-   <View style={{alignItems:'center'}}>
-    <TouchableOpacity
-          style={styles.loginScreenButton}
-          onPress={logout}
-          underlayColor='#fff'>
-          <Text style={styles.loginText}>Log out</Text>
- </TouchableOpacity>
  </View>
 
   <View>
